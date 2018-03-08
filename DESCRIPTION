@@ -1,0 +1,13 @@
+Package: Credential3.1
+Type: Package
+Title: An bioinformatics tool for biologically-relavent feature extraction  features and untargeted metabolomics method optimization.
+Version: 3.1.2
+Date: 2018-03-06
+Author: Nathanial Guy Mahieu<nate@mahie.us>, Lingjue Wang<lingjue@wustl.edu>
+Maintainer: Lingjue Wang <lingjue@wustl.edu>
+Description: Credentialing searches U12C/U13C feature pairs in isotope-labelled metabolomic datasets. It filters out bioinformatic noise, chemical contaminants from the biological dataset.
+License: GNU GPL version 3
+Encoding: UTF-8
+LazyData: true
+Depends: data.table, igraph, magrittr, matrixStats, xlsx
+RoxygenNote: 6.0.1
