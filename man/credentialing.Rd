@@ -34,8 +34,6 @@ credentialing(peaktable1, peaktable2, ppm, rtwin, rtcom, ratio1 = 1/1,
 \item{mpc}{A range of mass per carbon to be considered when searching possible isotope pairs and identifying U12C and U13C isotope peaks. The default value is c(12,120)}
 
 \item{maxnmer}{maximum number of ion aggregation to be considered, The default value is 4.}
-
-\item{export}{Boolean value. Whether to export excel files for the credentialed features. The default is FALSE.}
 }
 \value{
 A list of the credentialed features before and after 1st and 2nd round filtering by the function.

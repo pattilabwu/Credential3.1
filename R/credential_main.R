@@ -15,9 +15,8 @@
 #' @param charges charge states of the ions to be considered when searching isotope pairs. The default value is 1:2.
 #' @param mpc A range of mass per carbon to be considered when searching possible isotope pairs and identifying U12C and U13C isotope peaks. The default value is c(12,120)
 #' @param maxnmer maximum number of ion aggregation to be considered, The default value is 4.
-#' @param export Boolean value. Whether to export excel files for the credentialed features. The default is FALSE.
 #' @keywords credentialing
-#' @import data.table matrixStats
+#' @import data.table
 #' @return A list of the credentialed features before and after 1st and 2nd round filtering by the function.
 #' @export
 
@@ -68,10 +67,7 @@ credentialing = function(peaktable1, peaktable2, ppm, rtwin, rtcom, ratio1= 1/1,
 
   match_cf = matchcredfeature(dtR1,dtR2,ppm=ppm,drt=rtcom,ratio=ratio1/ratio2,ratio_tol = ratios_tol)
 
-  # result showup
-
-
-  # data output
+   # data output
 
   credentialing = list(CredentialedFeature1R1=ft_1, CredentialedFeature2R1=ft_2, knots1=knots_f1, knots2=knots_f2, credentialedKnots1=credentials_f1,credentialedKnots2=credentials_f2,
                        CredentialedFeatureGroups = match_cf$Credentialed_FeatureGroups, CredentialedFeatureR2=match_cf$Credentialed_Features, CredentialedFeatureR2F = match_cf$Credentialed_Features_Filtered,

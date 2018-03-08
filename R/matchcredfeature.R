@@ -94,6 +94,5 @@ cat(length(unique(match_filtered[,quipu_1])), "common feature groups are finally
 cat(nomatch1, "unmatched features in group #1 and",nomatch2,"unmatched features in group #2.\n")
 cat(length(quipu_dm1),"features in group #1 and",length(quipu_dm2),"features in group #2 have duplicated matches.\n")
 
-
 list(Credentialed_FeatureGroups=quipu_match,Credentialed_Features=match_combined,Credentialed_Features_Filtered = match_filtered, NomatchFeatures_Group1=nomatch1_combined,NomatchFeatures_Group2=nomatch2_combined)
 }
