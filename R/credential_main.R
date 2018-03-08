@@ -18,7 +18,7 @@
 #' @param export Boolean value. Whether to export excel files for the credentialed features. The default is FALSE.
 #' @keywords credentialing
 #' @export
-#' @import data.table matrixStats
+#' @import data.table matrixStats xlsx
 #' @return A list of the credentialed features before and after 1st and 2nd round filtering by the function.
 
 credentialing = function(peaktable1, peaktable2, ppm, rtwin, rtcom, ratio1= 1/1, ratio2 = 1/2, ratio_tol=0.1, ratios_tol = 0.1, cd=13.00335-12, charges= 1:2, mpc=c(12,120), maxnmer=4, export= F){
