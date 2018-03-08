@@ -17,11 +17,11 @@
 #' @param maxnmer maximum number of ion aggregation to be considered, The default value is 4.
 #' @param export Boolean value. Whether to export excel files for the credentialed features. The default is FALSE.
 #' @keywords credentialing
-#' @import data.table matrixStats xlsx
+#' @import data.table matrixStats
 #' @return A list of the credentialed features before and after 1st and 2nd round filtering by the function.
 #' @export
 
-credentialing = function(peaktable1, peaktable2, ppm, rtwin, rtcom, ratio1= 1/1, ratio2 = 1/2, ratio_tol=0.1, ratios_tol = 0.1, cd=13.00335-12, charges= 1:2, mpc=c(12,120), maxnmer=4, export= F){
+credentialing = function(peaktable1, peaktable2, ppm, rtwin, rtcom, ratio1= 1/1, ratio2 = 1/2, ratio_tol=0.1, ratios_tol = 0.1, cd=13.00335-12, charges= 1:2, mpc=c(12,120), maxnmer=4){
 
   #initiation
   peaktable1 = data.table(peaktable1)
@@ -77,35 +77,6 @@ credentialing = function(peaktable1, peaktable2, ppm, rtwin, rtcom, ratio1= 1/1,
                        CredentialedFeatureGroups = match_cf$Credentialed_FeatureGroups, CredentialedFeatureR2=match_cf$Credentialed_Features, CredentialedFeatureR2F = match_cf$Credentialed_Features_Filtered,
                        CredentialedFeature1N2 = match_cf$NomatchFeatures_Group1, CredentialedFeature2N2 = match_cf$NomatchFeatures_Group2)
 
-
-  # generate csv files for credentialed features
-
-
-    if(export)
-    {
-      cat("\nGenerating CSV files of filtered and unfiltered credentialed feature-tables...")
-
-      cwd <- getwd()
-      #a unique reference number is generated
-      temp <- sample(100000000,1)
-      newf <- paste("CredentialingResults",temp, sep="_")
-
-      if(!file.exists(newf)){
-        dir.create(file.path(cwd,newf))
-        setwd(file.path(cwd,newf))
-
-        write.xlsx(credential$CredentialedFeatureR2,file="CredentialedFeature_R2.xlsx")
-        write.xlsx(credential$CredentialedFeature1N2,file="CredentialedFeatures1N2.xlsx")
-        write.xlsx(credential$CredentialedFeature2N2,file="CredentialedFeatures2N2.xlsx")
-        write.xlsx(credential$CredentialedFeature1R1,file="CredentialedFeature_1R1.xlsx")
-        write.xlsx(credential$CredentialedFeature1R1,file="CredentialedFeature_1R2.xlsx")
-
-        setwd(cwd)
-
-      }
-      cat("\nCSV files are stored in following folder:",newf)
-
-    }
 
   return(credentialing)
 }

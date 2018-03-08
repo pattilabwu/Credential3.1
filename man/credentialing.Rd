@@ -6,7 +6,7 @@
 \usage{
 credentialing(peaktable1, peaktable2, ppm, rtwin, rtcom, ratio1 = 1/1,
   ratio2 = 1/2, ratio_tol = 0.1, ratios_tol = 0.1, cd = 13.00335 - 12,
-  charges = 1:2, mpc = c(12, 120), maxnmer = 4, export = F)
+  charges = 1:2, mpc = c(12, 120), maxnmer = 4)
 }
 \arguments{
 \item{peaktable1}{the features from the first ratio dataset.}
