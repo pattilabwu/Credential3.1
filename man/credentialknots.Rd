@@ -24,6 +24,8 @@ credentialknots(Knots, ppmwid = 9, rtwid = 1, mpc = c(12, 120),
 \item{maxnmer}{integer The biggest n-mer to search for.}
 
 \item{cd}{numeric The mass spacing to search for (defaults to C13 - C12)}
+
+\item{.zs}{charge states to be considered}
 }
 \value{
 list A list with values "knot_quipu" and "quipu".  \code{knot_quipu} assigns feature knots to quipu - credentialed groups. \code{quipu} contains aggregate information about each credentialed group.

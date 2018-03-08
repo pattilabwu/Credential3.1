@@ -141,8 +141,10 @@ credential = function(knots, Knot_quipu, ppmwid, rtwid, factor, mpc, ratio, rati
 #' @param ratio numeric The ratio of U12C/U13C.
 #' @param ratio.lim numeric The maximum deviation from that ratio.
 #' @param maxnmer integer The biggest n-mer to search for.
+#' @param .zs charge states to be considered
 #' @param cd numeric The mass spacing to search for (defaults to C13 - C12)
-#'
+#' @import igraph magrittr
+#' @importFrom stats cutree dist hclust na.omit rt
 #' @seealso \code{\link{findknots}}
 #'
 #' @return list A list with values "knot_quipu" and "quipu".  \code{knot_quipu} assigns feature knots to quipu - credentialed groups. \code{quipu} contains aggregate information about each credentialed group.
