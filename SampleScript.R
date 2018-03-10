@@ -12,7 +12,7 @@ library(data.table)
 
 # Set up working directory
 #format for Mac OS:
-setwd("/Volumes/Users/Lingjue/CredentialingDemo")
+setwd("/Users/Lingjue/Desktop/CredentialingDemo")
 #Format for Windows:
 setwd("C:\Users\Mike\Desktop\CredentialingDemo")
 
@@ -46,15 +46,21 @@ xs_2 = fillPeaks(xs_2)
 featureGroup1 = xsGroupExtract(xs_1,intchoice = "into", sampling = 1)
 featureGroup2 = xsGroupExtract(xs_2,intchoice = "into", sampling = 1)
 
-# Check the results
+# Step 3_a: Construct input format of Credentialing
 
-featureGroup1$credTable    # the format for credentialing input
-featureGroup1$featuretable # detailed table for features
+features1T1 = featureGroup1$credTable # for 1T1
+features1T2 = featureGroup2$credTable # for 1T2
+
+  # Or Step 3_b: Construct input format of Credentialing from CSV files
+  library(utils)
+
+  features1T1 = data.table(read.csv("features1T1.csv")) # make sure the format in csv is correct
+  features1T2 = data.table(read.csv("features1T2.csv")) # includes
 
 
-# Step 3: Credentialing extracted features and check results
+# Step 4: Credentialing extracted features and check results
 
-credential = credentialing(featureGroup1$credTable,featureGroup2$credTable,ppm = 20,rtwin = 2,rtcom = 1, ratio1 = 1/1, ratio2 = 1/2, ratio_tol = 0.1, charges = 1:4)
+credential = credentialing(features1T1,features1T2,ppm = 20,rtwin = 2,rtcom = 1, ratio1 = 1/1, ratio2 = 1/2, ratio_tol = 0.1, charges = 1:4)
 
 # Check the results
 

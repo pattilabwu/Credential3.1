@@ -89,10 +89,13 @@ colnames(match_combined) <- c("cc_1","mz_1", "rt_1", "int_1", "knot_1", "tail_1"
 match_combined[,"combined_ratio":=ratio_1/ratio_2]
 match_filtered= match_combined[which(combined_ratio>=ratio*ratio_tol & combined_ratio<=ratio/ratio_tol),]
 
-cat("\n\n",length(quipu_match[,quipu_m1]), " unique matches are found between two groups.\n")
-cat(length(unique(match_filtered[,quipu_1])), "common feature groups are finally credentialed.\n")
-cat(nomatch1, "unmatched features in group #1 and",nomatch2,"unmatched features in group #2.\n")
-cat(length(quipu_dm1),"features in group #1 and",length(quipu_dm2),"features in group #2 have duplicated matches.\n")
+cat("\n",length(unique(match_filtered[,quipu_1])), "common feature groups are finally credentialed.\n")
+
+#cat("\n",length(quipu_match[,quipu_m1]), " unique matches are found between two groups.\n")
+
+#cat(nomatch1, "unmatched features in group #1 and",nomatch2,"unmatched features in group #2.\n")
+
+#cat(length(quipu_dm1),"features in group #1 and",length(quipu_dm2),"features in group #2 have duplicated matches.\n")
 
 list(Credentialed_FeatureGroups=quipu_match,Credentialed_Features=match_combined,Credentialed_Features_Filtered = match_filtered, NomatchFeatures_Group1=nomatch1_combined,NomatchFeatures_Group2=nomatch2_combined)
 }
