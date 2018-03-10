@@ -22,7 +22,7 @@ setwd("C:\Users\Mike\Desktop\CredentialingDemo")
 # suppose your mzXML files are stored in "1T1" and "1T2" folder under the working directory.
 # For "1T1" condition
 # Chromatographic peak detection
-xs_1 = xcmsSet("./Ratio1", method="centWave", ppm=20, peakwidth=c(5,30), snthresh=5, prefilter=c(3,1000))
+xs_1 = xcmsSet("./1T1", method="centWave", ppm=20, peakwidth=c(5,30), snthresh=5, prefilter=c(3,1000))
 # Grouping peaks across the samples.
 xs_1 = group(xs_1, bw=5, mzwid=.015, minfrac=0.5)
 # Retention time re-alignment(correction)
@@ -33,7 +33,7 @@ xs_1 = group(xs_1, bw=5, mzwid=.015, minfrac=0.5)
 xs_1 = fillPeaks(xs_1)
 
 # For "1T2" condition
-xs_2 = xcmsSet("./Ratio2", method="centWave", ppm=20, peakwidth=c(5,30), snthresh=5, prefilter=c(3,1000))
+xs_2 = xcmsSet("./1T2", method="centWave", ppm=20, peakwidth=c(5,30), snthresh=5, prefilter=c(3,1000))
 xs_2 = group(xs_2, bw=5, mzwid=.015, minfrac=0.5)
 xs_2 = retcor(xs_2, method="obiwarp",profStep=1)
 xs_2 = group(xs_2, bw=5, mzwid=.015, minfrac=0.5)
