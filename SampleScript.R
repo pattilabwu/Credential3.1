@@ -9,12 +9,13 @@ devtools::install_github("pattilabwu/Credential3.1")
 library(xcms)
 library(Credential3.1)
 library(data.table)
+library(utils)
 
 # Set up working directory
 #format for Mac OS:
 setwd("/Users/Lingjue/Desktop/CredentialingDemo")
 #Format for Windows:
-setwd("C:\Users\Mike\Desktop\CredentialingDemo")
+setwd("C:/Users/Mike/Desktop/CredentialingDemo")
 
 
 # Step 1: Data-preprocessing with XCMS
@@ -40,7 +41,6 @@ xs_2 = group(xs_2, bw=5, mzwid=.015, minfrac=0.5)
 xs_2 = fillPeaks(xs_2)
 
 
-
 # Step 2: Feature extraction from XCMS
 
 featureGroup1 = xsGroupExtract(xs_1,intchoice = "into", sampling = 1)
@@ -52,7 +52,6 @@ features1T1 = featureGroup1$credTable # for 1T1
 features1T2 = featureGroup2$credTable # for 1T2
 
   # Or Step 3_b: Construct input format of Credentialing from CSV files
-  library(utils)
 
   features1T1 = data.table(read.csv("features1T1.csv")) # make sure the format in csv is correct
   features1T2 = data.table(read.csv("features1T2.csv")) # includes
