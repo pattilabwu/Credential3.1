@@ -20,7 +20,7 @@
 #' @return A list of the credentialed features before and after 1st and 2nd round filtering by the function.
 #' @export
 
-credentialing = function(peaktable1, peaktable2, ppm, rtwin, rtcom, ratio1= 1/1, ratio2 = 1/2, ratio_tol=0.1, ratios_tol = 0.1, cd=13.00335-12, charges= 1:2, mpc=c(12,120), maxnmer=4){
+credentialing = function(peaktable1, peaktable2, ppm, rtwin, rtcom, ratio1= 1/1, ratio2 = 1/2, ratio_tol=0.1, ratios_tol = 0.2, cd=13.00335-12, charges= 1:4, mpc=c(12,120), maxnmer=4){
 
   #initiation
   peaktable1 = data.table(peaktable1)
