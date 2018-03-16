@@ -48,7 +48,7 @@ setwd("C:/Users/Mike/Desktop/CredentialingDemo") # Windows format
   featureGroup1 = xsGroupExtract(xs_1,intchoice = "into", sampling = 1)
   featureGroup2 = xsGroupExtract(xs_2,intchoice = "into", sampling = 1)
   features1T1 = data.table(featureGroup1$credTable)		# data.table object with 4 columns: "cc", "rt", "mz", "i"
-  features1T2 = data.table(featureGroup2&credTable)		# data.table object with 4 columns: "cc", "rt", "mz", "i"
+  features1T2 = data.table(featureGroup2$credTable)		# data.table object with 4 columns: "cc", "rt", "mz", "i"
 
 # Or Step 2_b: Manual Processing of Files from Other Data Processing Pipelines
   # The features tables should include only four columns: “cc”, “mz”, “rt” and “i”.
