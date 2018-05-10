@@ -23,18 +23,22 @@ xsGroupExtract = function(xs,intchoice="into",sampling=1){
   for(i in seq.int(xS[, .N])){
 
     idx_tmp = xs@groupidx[[i]]
-    peak_tmp = xs@peaks[idx_tmp,] # extract all the intensities and take the average
+    peak_tmp = data.table(xs@peaks[idx_tmp,]) # extract all the intensities and take the average
+    peak_tmp[,`:=`(peakwidth = rtmax-rtmin)]
+
     if(sampling==1){
-      xS[i,"intmean":= mean(peak_tmp[,intchoice])] #intm is the mean of into's of all sample peaks
+      xS[i,"intmean":= mean(data.matrix(peak_tmp[,intchoice,with=F]))] #intm is the mean of into's of all sample peaks
       intindex = "intmean"
     } else if(sampling==2){ # extract the maximum intensity
-      xS[i,"intmax":= max(peak_tmp[,intchoice])]
+      xS[i,"intmax":= max(peak_tmp[,intchoice,with=F])]
       intindex = "intmax"
     } else{
       stop("Wrong sampling number. 1--mean intensity, or 2-- maximum intensity", call. = TRUE)
     }
-    xS[i,"rtdiff" := max(peak_tmp[,"rt"]) - min(peak_tmp[,"rt"])] # check peak width
-    xS[i,"mzppm":= (max(peak_tmp[,"mzmax"])-min(peak_tmp[,"mzmin"]))*10E6/mean(peak_tmp[,"mz"])] # check mz ppm error
+    xS[i,"peakwidth":=mean(peak_tmp[,peakwidth])]
+    xS[i,"rtdiff" := rtmax - rtmin] # check retention time shift
+    xS[i,"peakdiff":= max(peak_tmp[,peakwidth]) - min(peak_tmp[,peakwidth])] # check peak width
+    xS[i,"mzppm":= (mzmax-mzmin)*1E6/mzmed] # check mz ppm error
   }
 
   # dataset clean-up
@@ -49,8 +53,11 @@ xsGroupExtract = function(xs,intchoice="into",sampling=1){
   extractFeatures = list(featuretable=xS,credTable=dt)
 
   cat("\nFeatures are successfully extracted.")
-  cat("\nThe peak width range is between",min(xS[,rtdiff]),"and",max(xS[,rtdiff]),"with an average of",mean(xS[,rtdiff],na.rm = TRUE))
+  cat("\nThe retention time shift is between",min(xS[,rtdiff]),"and",max(xS[,rtdiff]),"with an average of",mean(xS[,rtdiff],na.rm = TRUE))
+  cat("\nThe range of peakwidth is between",min(xS[,peakwidth]),"and",max(xS[,peakwidth]),"with an average of",mean(xS[,peakwidth],na.rm = TRUE))
+  cat("\nThe peakwidth shift is between",min(xS[,peakdiff]),"and",max(xS[,peakdiff]),"with an average of",mean(xS[,peakdiff],na.rm = TRUE))
   cat("\nThe mass error in ppm is between",min(xS[,mzppm]),"and",max(xS[,mzppm]),"with an average of",mean(xS[,mzppm]),na.rm =TRUE)
+
   return(extractFeatures)
 
 }

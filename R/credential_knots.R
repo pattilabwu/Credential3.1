@@ -197,7 +197,7 @@ credentialknots = function(Knots, ppmwid = 9, rtwid = 1, mpc = c(12, 120), ratio
 
   Quipu = Knot_quipu[Knot,,on="knot"][,.(minsupport = min(n), maxsupport = max(n), nknot = .N, ratio = calcratio(.SD)), by="quipu"][!is.na(quipu) & !duplicated(quipu)]
 
-  cat("\nFound", nrow(Quipu)-1, "credentialed knots.")
+  cat("\nFound", nrow(Quipu)-1, "credentialed knots.\n")
 
   list(knot_quipu = Knot_quipu, quipu = Quipu)
 }
