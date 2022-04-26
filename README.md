@@ -1,97 +1,136 @@
-# Credential3.1
-A bioinformatics tool for biologically-relavent feature extraction features and untargeted metabolomics method optimization.
+# Credential3.1 R package -- Important Update
+
+For readers from credentialing protocol:
+
+Credential3.1 package is now transfered to official pattilab Github repository under branch name "release/3.1". [Patti Lab GitHub](github.com/pattilab/).
+
+This page is now discontinued. Please email wang.lingjue@wustl.edu, kevin.cho@wustl.edu, or gjpattij@wustl.edu for any questions.
+
+## Introduction
+Credentialing is a method to identify biologically relevant features from untargeted metabolomics data. The analysis is based on two feature tables with index (*cc*), m/z (*mz*), retention time (*rt*) and intensity (*i*) values. Experimentally, credentialing requires two sets of samples by mixing unlabeled and U13C-labeled samples at two user-defined ratios (*ratio1*, *ratio2*). *credential* is a bioinformatics tool (R package) to analyze feature tables from untargeted LC/MS based analysis and infer biologically-relavent features from untargeted metabolomics. 
+
+The current version **credential_3.1.7** was developed as a new algorithm to orginal methods paper:
+
+1. First, the algorithm searches *knot* at defined possible charge states in each feature table. A *knot* is a set of putative isotopologues with close retention time and defined m/z spacing. 
+2. Second, the algorithm resolves merged knots with multiple isotopologue patterns. 
+3. Third, the algorithm searches *quipu* from *knots*. A *quipu* is a set of *knots* that represent the unlabeled and labeled sides of the isotopologues of one compound. Features within a quipu have shared retention time, m/z spacing, charge state, intensity pattern (ratios), qualifying mass per carbon and peak intensity ratios. *quipus* at each mixing ratios are considered feature groups that pass the first round of credentialing. 
+4. Finally, the algorithm matches credentialed quipus between two credentialing groups by retention time, charge state, head/tail m/z values, and thresholds of the ratios of major labeled/unlabled peaks. The resulting *quipus* are considered credentialed features that pass two rounds of credentialing.
+
+## References
+- [Mahieu, N. G., Huang, X., Chen, Y. J., & Patti, G. J. (2014). Credentialing features: a platform to benchmark and optimize untargeted metabolomic methods. Analytical Chemistry, 86(19), 9583-9589.](https://doi.org/10.1021/ac503092d)
+- [Wang, L., Naser, F. J., Spalding, J. L., & Patti, G. J. (2019). A protocol to compare methods for untargeted metabolomics. In Metabolic Signaling (pp. 1-15). Humana Press, New York, NY.](https://link.springer.com/protocol/10.1007/978-1-4939-8769-6_1)
+
+## Usage
+
+### Installation
+```
+install.packages("devtools")
+devtools::install_github("pattilab/credential", ref="release/3.1", dependencies = T)
+```
+
+### Data Input
+Credentialing takes a feature table (*data.table* or *data.frame*) that requires at least 4 columns for credentialing algorithm: *cc* - feature index, *mz* - mass-to-charge value, *rt* - retention time, and *i*-intensity. Feature table can be generated from XCMS or other peak detection software. 
+
+- To generate the formatted feature tables from *xcmsSet*:
+```
+features <- credential::getXCMSfeature(xs = credentialxcms, intchoice="into", sampling = 1, sampleclass = NULL, export = T)
+feature1t1 <- features$`1T1-credTable`
+feature1t2 <- features$`1T2-credTable`
+```
+- To import feature tables from external CSV files:
+```
+feature1t1 <- data.table(read.csv(system.file("extdata","features1T1.csv", package = "credential")))
+feature1t2 <- data.table(read.csv(system.file("extdata","features1T2.csv", package = "credential")))
+```
+Column names must be adjusted accordingly as above using *colnames()*.
+
+```
+colnames(features) <- c("cc","mz","rt","i")
+```
+
+```
+> feature1t1
+          cc        mz        rt          i
+    1:     1  101.0963 2182.1550  14444.594
+    2:     2  101.0963 2227.5400  18668.742
+    3:     3  101.0964 2258.0550  17612.537
+    4:     4  101.0964 2280.3100  32333.016
+    5:     5  102.0455   82.5735   6732.472
+   ---                                     
+14550: 15448 1597.2860 1551.5900  47496.896
+14551: 15449 1597.2964 1578.8200  93539.010
+14552: 15450 1598.1958 1605.5200   5061.292
+14553: 15451 1598.2902 1551.5900  60039.320
+14554: 15452 1598.3012 1577.8100 206334.273
+```
+
+### credentialing 3.0 -- integrated processing
+```
+credential_test <- credential::credentialing(peaktable1 = feature1t1, peaktable2 = feature1t2, ppm = 15, rtwin = 1, rtcom =2, ratio1 = 1/1, ratio2 = 1/2, 
+                                             ratio_tol = 0.1, ratio_ratio_tol = 0.9, cd = 13.00335-12, charges = 1:4, mpc = c(12,120), maxnmer = 4,
+                                             export = T, plot = T, projectName = "credential_demo")
+```
+- Documentation of *credentialing()*
+```
+help("credential::credentialing")
+```
+### credentialing 3.0 -- step-by-step processing
+
+```
+# manual step-by-step credentialing
+  
+ # parameter settings
+ ppm = 15
+ rtwin = 1
+ rtcom =2
+ ratio1 = 1/1
+ ratio2 = 1/2
+ ratio_tol = 0.1
+ ratio_ratio_tol = 0.9
+ cd = 13.00335-12
+ charges = 1:4
+ mpc = c(12,120)
+ maxnmer = 4
+ projectName = "credential_demo"
+  
+ # step1 find isotope knots of each feature table (resolve merged isotope knots are performed in this step now)
+ knots1 <- credential::findknots(features = feature1t1, .zs = charges, ppmwid = ppm, rtwid = rtwin, cd = cd)
+ knots2 <- credential::findknots(features = feature1t2, .zs = charges, ppmwid = ppm, rtwid = rtwin, cd = cd)
+  
+ # step2 credential knots from each feature table (quipus)
+ credentialedknots1 <- credential::credentialknots(Knots = knots1, ppmwid = ppm, rtwid = rtwin, Ratio = ratio1, Ratio.lim = ratio_tol)
+ credentialedknots2 <- credential::credentialknots(Knots = knots2, ppmwid = ppm, rtwid = rtwin, Ratio = ratio2, Ratio.lim = ratio_tol)
+  
+ # step3 match quipus (credentialed knots) to obtain credentialed groups
+ credentialedquipus <- credentialquipu(credentialedknots1, credentialedknots2, ppm = ppm, rtwin = rtcom, ratio_ratio = ratio1/ratio2, 
+                                       ratio_ratio_tol = ratio_ratio_tol, tailmatch=T)
  
-# Installation
-```
-devtools::install_github("pattilabwu/Credential3.1")
-library(Credential3.1)
-```
-
-# Input data format
-The input data is a peaktable that contains at least 4 columns of data: "cc"-index No, "mz"- m/z value, "rt"- retention time and "i"-intensity
-This peaktable can be generated from XCMS or many other peak-picking algorithms. 
-The name of the columns in the peaktable has to be "mz", "cc", "rt" and "i".
-
-```
-
-> features
-      cc       mz       rt            i
- 1: 4850 550.3067  851.529     5419.261
- 2: 5013 558.3340  850.141     5854.929
- 3: 4804 548.3008  850.391     5209.042
- 4: 5029 560.3396  850.642     5998.703
- 5: 4827 549.4886 1536.830 10604955.633
- 6: 4852 550.4924 1536.830  4241038.103
- 7: 4874 551.4955 1536.580  1206786.640
- 8: 4896 552.4979 1536.590   139663.706
- 9: 5282 580.5907 1536.580    28051.912
-10: 5303 581.5949 1536.580   202953.667
-11: 5315 582.5990 1536.580  1286416.952
-12: 5324 583.6029 1536.330  5415255.371
+ # step4 plot credentialed peaks
+    # merge credentialed peaks
+    credpeak1 = feature1t1[knots1$cc_knot[credentialedknots1$knot_quipu[!is.na(quipu)],,on="knot"],,on="cc"][credentialedquipus$credentialedgroups[,. (quipu=quipu1,charge1,mainmz11,mainmz21,ratio1)],,on="quipu"]
+    credpeak1 = credpeak1[,.(cc1=cc,mz1=mz,rt1=rt,i1=i,knot1=knot,tail1=tail,quipu1=quipu,charge1,mainmz11,mainmz21,ncar1,ratio1)]
+    credpeak2 = feature1t2[knots2$cc_knot[credentialedknots2$knot_quipu[!is.na(quipu)],,on="knot"],,on="cc"][credentialedquipus$credentialedgroups[,.(quipu=quipu2,charge2,mainmz12,mainmz22,ratio2,ratio1_ratio2)],,on="quipu"]
+    credpeak2 = credpeak2[,.(cc2=cc,mz2=mz,rt2=rt,i2=i,knot2=knot,tail2=tail,quipu2=quipu,charge2,mainmz12,mainmz22,ncar2,ratio2,ratio1_ratio2)]
+    credentialedpeaks = do.call(rbind,apply(credentialedquipus$credentialedindex[order(credentialedquipus$credentialedgroups$basemz1)], MARGIN = 1, function(x){credential:::cbind.fill(credpeak1[quipu1==x[1]][order(mz1)],credpeak2[quipu2==x[2]][order(mz2)])}))
+    
+    # plotting
+    plotcredpeaks(Credentialedindex = credentialedquipus$credentialedindex, Credentialedpeaks = credentialedpeaks,
+                  filename = paste(paste(projectName,nrow(credentialedquipus$credentialedindex),"credentialed_peak_groups",sep="_"),".pdf",sep=""))
+  
+ # step5 export credentialed groups and credentialed peaks as csv files
+ write.csv(credentialedquipus$credentialedgroups,file = paste0(projectName,"_CredentialedGroups.csv"))
+ write.csv(credentialedpeaks,file = paste0(projectName,"_CredentialedPeaks.csv"))
 ```
 
-# Usage
+### data output
+- *credentialed* -- *list* Including all the processed results of credentialing
+- *credentialedgroups* -- *data.table* A summary of credentialed *quipus* with following information: *quipu* (quipu index), *nknot* (number of knots), *npeak* (number of peaks), *rtmean* (mean retention time), *basemz* (lowest mz), *mainmz1* (credentialed pair - unlabeled mz), *mainmz2* (credentialed pair - labeled mz), *int1* (credentialed pair - intensity of unlabeled mz), *int2* (credentialed pair - intensity of labeled mz), *ratio* (ratio of unlabled/labeled intensity), *credentialed* (TRUE/FALSE)
+- *credentialedpeaks* *data.table* -- A summary of all credentialed peaks in two credentialing groups with following information: *quipu* (quipu index), *knot* (knot index), *cc* (feature index), *charge* (charge state if determined), *mz* (m/z), *rt* (retention time), *i* (intensity), *tail* (if this feature is tail peak in knot), *mainmz1*, *mainmz2*, *ratio*
+- *credentialedknots1* *list* -- A list of credentailed *quipus* (*knots*) in first credentialing group
+- *credentialedknots1* *list* -- A list of credentailed *quipus* (*knots*) in second credentialing group
+- *knots1* *list* -- All knots in first credentialing group (*feature1t1*) 
+- *knots2* *list* -- All knots in second credentialing group (*feature1t2*) 
+- *CredentialParams* *list* -- Parameters used in this analysis.
 
-```
-credential = credentialing(peaktable1,peaktable2,ppm = 20,rtwin = 2,rtcom = 1, ratio1 = 1/1, ratio2 = 1/2, ratio_tol = 0.1, charges = 1:4)
-```
-
-For detailed illustration of the parameters, see:  
-```
-help(credentialing) 
-```
-
-# data output
-A list of tables will be generated and compiled in the 'credential' object shown above. It includes:
-
-CredentialedFeatureR2F -- final round credentialed features from both peaktables
-
-CredentialedFeatureR2 -- mz&rt matched features from both peaktables
-
-CredentialedFeature1N2 -- features that fail to pass 2nd filtering from credentialed features #1
-
-CredentialedFeature2N2 -- features that fail to pass 2nd filtering from credentialed features #2
-
-CredentialedFeature1R1 -- first round credentialed features from peaktable #1
-
-CredentialedFeature2R1 -- first round credentialed features from peaktable #2
-
-knots1&knots2 -- possible isotope pairs from peaktable #1&#2
-
-credentialedKnots1&credentialedKnots2 -- credentialed groups from isotope pairs table #1&#2
-
-CredentialedFeatureGroups -- matched index between group #1&#2("quipu" is the index for credentialed groups)
-
-# Understanding the output data
-
-#65 credentialed feature groups:
-
-```
-credential7$CredentialedFeatureR2F[quipu_1==65,]
-   cc_1     mz_1     rt_1      int_1 knot_1 tail_1 quipu_1  ratio_1 cc_2     mz_2    rt_2      int_2 knot_2 tail_2 quipu_2  ratio_2 combined_ratio
-1: 8843 833.6024 1594.130 123599.468   1090      0      65 8.961008 8854 833.6031 1593.79  77270.810    596      0     679 3.532957       2.536404
-2: 8856 834.6063 1594.360  66766.104   1090      0      65 8.961008 8869 834.6067 1594.04  38324.387    596      0     679 3.532957       2.536404
-3: 9336 872.7280 1593.995   6910.652   2180      0      65 8.961008 9333 872.7280 1593.79   7342.721   1578      0     679 3.532957       2.536404
-4: 9346 873.7326 1594.360  29194.090   2180      0      65 8.961008 9344 873.7334 1593.54  40671.305   1578      0     679 3.532957       2.536404
-5: 9354 874.7378 1593.880  96785.679   2180      0      65 8.961008 9353 874.7382 1593.54 131249.741   1578      0     679 3.532957       2.536404
-6: 9364 875.7416 1594.110 192621.899   2180      0      65 8.961008 9365 875.7426 1593.54 230820.709   1578      0     679 3.532957       2.536404
-7: 9372 876.7447 1593.860  13793.032   2180      1      65 8.961008 9377 876.7464 1593.21  21871.426   1578      1     679 3.532957       2.536404
-
-```
-cc_1/2: peak index number
-
-mz_1/2: measured mz value
-
-rt_1/2: retention time in seconds
-
-int_1/2: intensity
-
-knot_1/2: index for isotope pairs
-
-tail_1/2: U13C peak or not
-
-quipu_1/2: index for 1st round credentialed groups within each ratio condition
-
-ratio_1/2: U12C/U13C ratio
-
-Peaks from group1 and group2 are aligned together based on the mz and rt time of the monoisotopic mass within each credentialed group. 2nd credentialing is achieved by filtering the combined_ratio of the matches.
+## Author of README (Updated on 04/26/2022)
+Lingjue Mike Wang (wang.lingjue@wustl.edu)
